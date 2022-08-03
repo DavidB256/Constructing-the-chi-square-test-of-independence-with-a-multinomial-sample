@@ -5,4 +5,4 @@ Created for the class Introduction to Advanced Statistical Inference (STAT 7100)
 
 References:
 
-Berger, Roger L., and Casella, George. Statistical Inference. India, Thomson Learning, 2002.
+Berger, Roger L., and Casella, George. _Statistical Inference_. India, Thomson Learning, 2002.
