@@ -1,0 +1,259 @@
+\documentclass{beamer}
+\mode<presentation>
+\usetheme{Berlin}
+\usepackage{graphicx, epstopdf}
+\usepackage{amsmath, amsthm, amssymb, amsfonts}
+
+\title{Multinomial sampling}
+\subtitle{Demo 1, Unit 6B}
+\author{David Bass}
+\date{April 13, 2022}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\section{Introduction}
+\begin{frame}
+\frametitle{Motivation}
+In this demonstration, we will construct the chi-square test of independence using a random sample $\textbf{X}$ of multinomial data and Wilks' theorem, which gives that, for a likelihood ratio $\rho$ of an observation $\textbf{x}$, the distribution of $2\log\rho(\textbf{x})$ is approximately chi-square.
+\end{frame}
+
+\begin{frame}
+\frametitle{Defining a table $T$}
+
+Let $T$ be a table with $r$ rows and $c$ columns. $T$ contains $r\cdot c$ cells, each of which is uniquely identified with a row value $j$ and a column value $k$.
+\vskip0.2in
+\begin{center}
+	\begin{tabular}{ |c|c|c|c| } 
+		\hline
+		&1 & $\cdots$ & c \\ 
+		\hline
+		1&(1, 1) &$\cdots$ & (1, c) \\ 
+		\hline
+		$\vdots$& $\vdots$& $\ddots$ & $\vdots$ \\ 
+		\hline
+		r&(r, 1) & $\cdots$ & (r, c) \\ 
+		\hline
+	\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Motivation for table $T$}
+	
+	Considering the rows as levels of a factor $A$ and the columns as levels of a factor $B$, we are interested in testing whether the effects of $A$ and $B$ are independent.
+	\vskip0.2in
+	\begin{center}
+		\begin{tabular}{ |c|c|c|c| } 
+			\hline
+			&1 & $\cdots$ & c \\ 
+			\hline
+			1&(1, 1) &$\cdots$ & (1, c) \\ 
+			\hline
+			$\vdots$& $\vdots$& $\ddots$ & $\vdots$ \\ 
+			\hline
+			r&(r, 1) & $\cdots$ & (r, c) \\ 
+			\hline
+		\end{tabular}
+	\end{center}
+	\vskip0.2in
+	Equivalently, we are interested in testing whether the joint distribution of $A$ and $B$ equals the product of the marginal distributions of $A$ and $B$.
+\end{frame}
+
+\section{Multinomial r.v.}
+\begin{frame}
+\frametitle{Defining a multinomial r.v. $\textbf{X}$ on $T$}
+Let $\textbf{X} = (\textbf{X}_1, \ldots, \textbf{X}_n)$ be an IID random sample of the cells of $T$, where \\
+\begin{itemize}
+	\item each $\textbf{X}_i = (X_{i,1,1}, \ldots, X_{i,1,c}, \ldots, X_{i,r,1}, \ldots, X_{i,r,c})$,
+	\item $X_{i,j,k}$ is the indicator variable that the $i$th observation equals cell $(j,k)$, and
+	\item the probability of choosing cell $(j, k)$ is $\theta_{j,k}$.
+\end{itemize}
+\vskip0.1in
+Let $\boldsymbol\theta = (\theta_{1,1}, \ldots, \theta_{1,c}, \ldots, \theta_{r,1}, \ldots, \theta_{r,c})$, so $\textbf{X}$ is a multinomial random variable with parameters $n$ and $\boldsymbol{\theta}$.
+\vskip0.1in
+Note that, since each $\textbf{X}_i=(X_{i,1,1}, \ldots, X_{i,1,c}, \ldots, X_{i,r,1}, \ldots, X_{i,r,c})$ encodes one observation in our sample, it is a vector containing one 1 and zeros everywhere else.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{$\boldsymbol{\theta}$ as a parameter of interest}
+	In order to show that the effects of row $j$ and column $k$ are independent, we will test the null hypothesis 
+	\[H_0:\theta_{j,k} = \theta_{j\circ}\theta_{\circ k}\]
+	
+	\begin{center}
+		\begin{tabular}{ |c|c|c|c|c| } 
+			\hline
+			&1 & $\cdots$ & c&row total \\ 
+			\hline
+			1&$\theta_{1,1}$ &$\cdots$ & $\theta_{1,c}$&$\theta_{1\circ}$ \\ 
+			\hline
+			$\vdots$& $\vdots$& $\ddots$ & $\vdots$&\vdots \\ 
+			\hline
+			r&$\theta_{r,1}$ & $\cdots$ & $\theta_{r,c}$&$\theta_{r\circ}$ \\ 
+			\hline
+			col. total&$\theta_{\circ1}$ & $\cdots$ & $\theta_{\circ c}$&1 \\ 
+			\hline
+		\end{tabular}
+	\end{center}
+	Note that a dot in the subscript denotes the sum over all values, e.g. $\theta_{1\circ} = \Sigma_{k=1}^c\theta_{1,k}$.
+	
+\end{frame}
+
+\begin{frame}
+\frametitle{Defining a total count variable $\textbf{Y}$}
+Let $\textbf{Y} = (Y_{1,1}, \ldots, Y_{1,c}, \ldots, Y_{r,1}, \ldots, Y_{r,c})$ be the random variable that counts the number of observations of each cell, i.e. 
+\[Y_{j,k} = \sum_{i=1}^nX_{i,j,k}\]
+for each $1\le j\le r$ and $1\le k\le c$.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Representing $\textbf{X}$ in $T$}
+We can represent our sample $\textbf{X}$ in $T$ with components of $Y$.
+\begin{center}
+	\begin{tabular}{ |c|c|c|c|c| } 
+		\hline
+		&1 & $\cdots$ & c&row total \\ 
+		\hline
+		1&$Y_{1,1}$ &$\cdots$ & $Y_{1,c}$&$Y_{1\circ}$ \\ 
+		\hline
+		$\vdots$& $\vdots$& $\ddots$ & $\vdots$&\vdots \\ 
+		\hline
+		r&$Y_{r,1}$ & $\cdots$ & $Y_{r,c}$&$Y_{r\circ}$ \\ 
+		\hline
+		col. total&$Y_{\circ 1}$ & $\cdots$ & $Y_{\circ c}$&$n$ \\ 
+		\hline
+	\end{tabular}
+\end{center}
+We are again using the dot notation in subscripts to denote the sum over all values, e.g. $Y_{1\circ} = \Sigma_{k=1}^cY_{1,k}$.
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Degrees of freedom of $\boldsymbol{\theta}$ in $T$}
+Since $\Sigma_{j=1}^r\Sigma_{k=1}^c\theta_{j,k} = 1$, one of the $r\cdot c$ probabilities is determined by the other $r\cdot c-1$. Thus, the total degrees of freedom for $\boldsymbol{\theta}$ are $r\cdot c-1$.
+\begin{center}
+	\begin{tabular}{ |c|c|c|c|c| } 
+		\hline
+		&1 & $\cdots$ & c&row total \\ 
+		\hline
+		1&$\theta_{1,1}$ &$\cdots$ & $\theta_{1,c}$&$\theta_{1\circ}$ \\ 
+		\hline
+		$\vdots$& $\vdots$& $\ddots$ & $\vdots$&\vdots \\ 
+		\hline
+		r&$\theta_{r,1}$ & $\cdots$ & $\theta_{r,c}$&$\theta_{r\circ}$ \\ 
+		\hline
+		col. total&$\theta_{\circ1}$ & $\cdots$ & $\theta_{\circ c}$&1 \\ 
+		\hline
+	\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Marginal degrees of freedom of $\boldsymbol{\theta}$ in $T$}
+	Similarly, since $\Sigma_{j=1}^r\theta_{j,k} = \theta_{\circ k}$ and $\Sigma_{k=1}^c\theta_{j,k} = \theta_{j\circ}$, the degrees of freedom within each row and column of $T$ are $c-1$ and $r-1$, respectively.
+	\begin{center}
+		\begin{tabular}{ |c|c|c|c|c| } 
+			\hline
+			&1 & $\cdots$ & c&row total \\ 
+			\hline
+			1&$\theta_{1,1}$ &$\cdots$ & $\theta_{1,c}$&$\theta_{1\circ}$ \\ 
+			\hline
+			$\vdots$& $\vdots$& $\ddots$ & $\vdots$&\vdots \\ 
+			\hline
+			r&$\theta_{r,1}$ & $\cdots$ & $\theta_{r,c}$&$\theta_{r\circ}$ \\ 
+			\hline
+			col. total&$\theta_{\circ1}$ & $\cdots$ & $\theta_{\circ c}$&1 \\ 
+			\hline
+		\end{tabular}
+	\end{center}
+	
+\end{frame}
+
+\section{Maximum likelihood ratio test}
+\begin{frame}
+\frametitle{The log-likelihood function of $\textbf{X}_i$}
+
+For each $\textbf{X}_i = (X_{i,1,1}, \ldots, X_{i,1,c}, \ldots, X_{i,r,1}, \ldots, X_{i,r,c})$,
+\vskip0.2in
+The likelihood function of $\textbf{X}_i$ is
+\[f_{\textbf{X}_i, \boldsymbol\theta}(\textbf{x}) = \prod_{j=1}^r\prod_{k=1}^c\theta_{j,k}^{X_{i,j,k}}\]
+Then the log-likelihood function of $\textbf{X}_i$ is \[\ell(\boldsymbol{\theta}; \textbf{X}_i) = \log f_{\textbf{X}_i, \boldsymbol\theta}(\textbf{x}) = \sum_{j=1}^r\sum_{k=1}^cX_{i,j,k}\log\theta_{j,k}\]
+	
+\end{frame}
+
+\begin{frame}
+\frametitle{Log-likelihood function of $\textbf{X}$}
+
+The likelihood function of $\textbf{X} = (\textbf{X}_1, \ldots, \textbf{X}_n)$ is\\
+\[f_{\textbf{X}, \boldsymbol{\theta}}(\textbf{X}) = \prod_{i=1}^nf_{\textbf{X}_i, \boldsymbol\theta}(\textbf{x})\]
+Then the log-likelihood function $\textbf{X}$ is
+\[\ell(\boldsymbol{\theta}; \textbf{X}) = \log f_{\textbf{X}, \boldsymbol\theta}(\textbf{x}) = \sum_{i=1}^n\sum_{j=1}^r\sum_{k=1}^cX_{i,j,k}\log\theta_{j,k}\]
+Recall that $Y_{j,k} = \sum_{i=1}^nX_{i,j,k}$, so
+\[\ell(\boldsymbol{\theta}; \textbf{X}) = \sum_{j=1}^r\sum_{k=1}^cY_{j,k}\log\theta_{j,k}\]
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{MLE for $\boldsymbol{\theta}$}
+	The maximum likelihood estimator $\boldsymbol{\hat\theta}$ for $\boldsymbol{\theta}$ is the component-wise sample proportion $\boldsymbol{\hat\theta} = (\hat\theta_{1,1}, \ldots, \hat\theta_{1,c}, \ldots, \hat\theta_{r,1}, \ldots, \hat\theta_{r,c})$, where each
+	\[\hat\theta_{j,k} = \frac{1}{n}\sum_{i=1}^nX_{i,j,k}=Y_{j,k}/n\]
+\end{frame}
+
+\begin{frame}
+	\frametitle{Maximizing the likelihood under the null hypothesis}
+	Recall the null hypothesis that the effects of the rows and columns are independent
+	\[H_0:\theta_{j,k} = \theta_{j\circ}\theta_{\circ k}\]
+	Under the null hypothesis, the likelihood function $\ell(\boldsymbol{\theta}; \textbf{X})$ is maximized when $\hat\theta_{j,k} = \hat\theta_{j\circ}\hat\theta_{\circ k} = (Y_{j\circ}/n)(Y_{\circ k}/n) = Y_{j\circ}Y_{\circ k}/n$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Maximizing the likelihood under the alternative hypothesis}
+	Consider the alternative hypothesis
+	\[H_1:\theta_{j,k} \ne \theta_{j\circ}\theta_{\circ k}\]
+	Under the alternative hypothesis, there is no constraint, so the likelihood function $\ell(\boldsymbol{\theta}; \textbf{X})$ is maximized when $\hat\theta_{j,k} = Y_{j,k}/n^2$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Log-likelihood ratio}
+	Let $\rho$ be the ratio of the unconstrained likelihood ($\boldsymbol{\theta}\in\Theta_0\cup\Theta_1$) to the constrained likelihood ($\boldsymbol{\theta}\in\Theta_0$), so
+	\[\rho(\textbf{X}) = \frac{\sup\{f_{\textbf{X}, \boldsymbol{\theta}} (\textbf{X})\ :\ \boldsymbol{\theta}\in \Theta_0\cup\Theta_1\}}{\sup\{f_{\textbf{X}, \boldsymbol{\theta}} (\textbf{X})\ :\ \boldsymbol{\theta}\in \Theta_0\}}\]
+	Then
+	\[\log\rho(\textbf{X}) = \sup\{\ell(\boldsymbol{\theta}, \textbf{X})\ :\ \boldsymbol{\theta}\in\Theta_0\cup\Theta_1\} - \sup\{\ell(\boldsymbol{\theta}, \textbf{X})\ :\ \boldsymbol{\theta}\in\Theta_0\}\]
+	\[=\sum_{j=1}^r\sum_{k=1}^cY_{j,k}\log \frac{Y_{j,k}}{n} - \sum_{j=1}^r\sum_{k=1}^cY_{j,k}\log \frac{Y_{j\circ}Y_{\circ k}}{n^2}\]
+	\[=\sum_{j=1}^r\sum_{k=1}^cY_{j,k}\log\frac{Y_{j,k}}{Y_{j\circ}Y_{\circ k}/n}\]
+\end{frame}
+
+\begin{frame}
+	\frametitle{Distribution of the log-likelihood ratio}
+	Wilks' theorem gives that $2\log\rho(\textbf{X})$ approximately follows a chi-square distribution with degrees of freedom equal to the difference in the number of free parameters between $H_1$ and $H_0$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Calculating degrees of freedom of the distribution}
+	Under the alternative hypothesis, there are no constraints, so the degrees of freedom are $\nu_1 = r\cdot c-1$. 
+	\vskip0.2in
+	The constraint of the null hypothesis gives we use the marginal degrees of freedom to get that $\nu_0 = (r-1) + (c-1) = r + c - 2$.
+	\vskip0.2in
+	Thus, the degrees of freedom of the chi-square distribution followed by $2\log\rho(\textbf{X})$ are $\nu = \nu_1 - \nu_0 = r\cdot c - r - c + 1 = (r-1)(c-1)$.
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}
+\frametitle{Conclusion}
+\begin{itemize}
+	\item Described a multinomial random sample $\textbf{X}$
+	\item Derived $\log\rho(\textbf{X}) = \sum_{j=1}^r\sum_{k=1}^cY_{j,k}\log\frac{Y_{j,k}}{Y_{j\circ}Y_{\circ k}/n}$
+	\item Applied Wilks' theorem to show that, approximately, $2\log\rho(\textbf{X})\sim\chi^2_{(r-1)(c-1)}$
+	\item Constructed the chi-square test of independence
+\end{itemize}
+	
+\end{frame}
+
+\end{document}
+
